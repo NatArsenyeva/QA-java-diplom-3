@@ -1,5 +1,6 @@
 package com;
 
+import com.model.Login;
 import com.model.Tokens;
 import com.model.UserRegisterResponse;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -7,6 +8,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.Base.getBaseSpec;
 import static io.restassured.RestAssured.given;
 
 public class UserOperations {
@@ -36,7 +38,7 @@ public class UserOperations {
 
         // отправляем запрос на регистрацию пользователя и десериализуем ответ в переменную response
         UserRegisterResponse response = given()
-                .spec(Base.getBaseSpec())
+                .spec(getBaseSpec())
                 .and()
                 .body(inputDataMap)
                 .when()
@@ -60,6 +62,19 @@ public class UserOperations {
         return responseData;
     }
 
+    // Метод авторизации пользователя
+    public void login(Login userCredentials){
+        UserRegisterResponse response = given()
+                .spec(getBaseSpec())
+                .body(userCredentials)
+                .when()
+                .post("/auth/login")
+                .then()
+                .extract()
+                .as(UserRegisterResponse.class);
+        Tokens.setAccessToken(response.getAccessToken().substring(7));
+    }
+
     /*
      метод удаления пользователя по токену, возвращенному после создания
      пользователя. Удаляем только в случае, если token заполнен.
@@ -69,12 +84,16 @@ public class UserOperations {
             return;
         }
         given()
-                .spec(Base.getBaseSpec())
+                .spec(getBaseSpec())
                 .auth().oauth2(Tokens.getAccessToken())
                 .when()
                 .delete("auth/user")
                 .then()
                 .statusCode(202);
+
+        Tokens.setAccessToken(null);
+        Tokens.setRefreshToken(null);
+
     }
 
 }
