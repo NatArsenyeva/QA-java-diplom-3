@@ -1,17 +1,15 @@
 package com.pageObject;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import com.model.User;
+import io.qameta.allure.Step;
+import lombok.Data;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
 import static com.codeborne.selenide.Selenide.page;
-import static com.codeborne.selenide.Selenide.webdriver;
-import static com.codeborne.selenide.WebDriverConditions.url;
-import static com.pageObject.SignInPage.URL_SIGN_IN_PAGE;
 
-
+@Data
 public class SignUpPage {
 
     public static final String URL_SIGN_UP_PAGE = "https://stellarburgers.nomoreparties.site/register";
@@ -52,6 +50,8 @@ public class SignUpPage {
         this.password.setValue(password);
     }
 
+
+    @Step("Зарегистрировать пользователя.")
     public SignUpPage signUp(User user){
         setName(user.getName());
         setEmail(user.getEmail());
@@ -60,23 +60,10 @@ public class SignUpPage {
         return this;
     }
 
-    public void checkGoToLoginPage() {
-        webdriver().shouldHave(url(URL_SIGN_IN_PAGE));
-    }
-
-    public SignUpPage checkErrorMessageIncorrectPassword() {
-        incorrectPassword.shouldHave(Condition.visible);
-        return this;
-    }
-
-    public void checkNotGoToLoginPage() {
-        webdriver().shouldHave(url(URL_SIGN_UP_PAGE));
-    }
-
+    @Step("Нажать на кнопку 'Войти'.")
     public SignInPage goToSignInPageThroughEnterBtn(){
         enterBtn.click();
         return page(SignInPage.class);
     }
-
 
 }

@@ -9,8 +9,11 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.Selenide.webdriver;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class SignInTest {
 
@@ -34,9 +37,9 @@ public class SignInTest {
     public void signInThroughEnterInAccountBtnTest(){
         mainPage = open(MainPage.URL_MAIN_PAGE, MainPage.class);
         mainPage.goToSignInPageThroughEnterInAccountBtn()
-                .checkGoToSignInPage()
-                .signIn(user)
-                .checkSignIn();
+                .signIn(user);
+        assertThat("Не найдена кнопка 'Оформить заказ'.",
+                mainPage.getToOrderBtn().shouldHave(visible).isDisplayed(),is(true));
     }
 
     @DisplayName("Вход через кнопку «Личный кабинет»")
@@ -44,29 +47,29 @@ public class SignInTest {
     public void signInThroughAccountBtnTest(){
         mainPage = open(MainPage.URL_MAIN_PAGE, MainPage.class);
         mainPage.goToSignInPageThroughAccountBtn()
-                .checkGoToSignInPage()
-                .signIn(user)
-                .checkSignIn();
+                .signIn(user);
+        assertThat("Не найдена кнопка 'Оформить заказ'.",
+                mainPage.getToOrderBtn().shouldHave(visible).isDisplayed(),is(true));
     }
 
     @DisplayName("Вход через кнопку «Войти» в форме регистрации")
     @Test
     public void signInFromSignUpPageThroughEnterBtnTest(){
         signUpPage = open(SignUpPage.URL_SIGN_UP_PAGE, SignUpPage.class);
-        signUpPage.goToSignInPageThroughEnterBtn()
-                .checkGoToSignInPage()
-                .signIn(user)
-                .checkSignIn();
+        mainPage = signUpPage.goToSignInPageThroughEnterBtn()
+                .signIn(user);
+        assertThat("Не найдена кнопка 'Оформить заказ'.",
+                mainPage.getToOrderBtn().shouldHave(visible).isDisplayed(),is(true));
     }
 
     @DisplayName("Вход через кнопку «Войти» в форме восстановления пароля")
     @Test
     public void signInFromForgotPasswordPageThroughEnterBtnTest(){
         forgotPasswordPage = open(ForgotPasswordPage.URL_FORGOT_PASSWORD_PAGE, ForgotPasswordPage.class);
-        forgotPasswordPage.goToSignInPageThroughEnterBtn()
-                .checkGoToSignInPage()
-                .signIn(user)
-                .checkSignIn();
+        mainPage = forgotPasswordPage.goToSignInPageThroughEnterBtn()
+                .signIn(user);
+        assertThat("Не найдена кнопка 'Оформить заказ'.",
+                mainPage.getToOrderBtn().shouldHave(visible).isDisplayed(),is(true));
     }
 
     @After

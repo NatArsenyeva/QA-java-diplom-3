@@ -7,7 +7,12 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
+import static com.pageObject.MainPage.URL_MAIN_PAGE;
+import static com.pageObject.SignInPage.URL_SIGN_IN_PAGE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class AccountTest {
 
@@ -21,7 +26,7 @@ public class AccountTest {
         userOperations = new UserOperations();
         signInPage = new SignInPage();
         user = userOperations.register();
-        signInPage = open(SignInPage.URL_SIGN_IN_PAGE, SignInPage.class);
+        signInPage = open(URL_SIGN_IN_PAGE, SignInPage.class);
     }
 
     @DisplayName("Переход из Личного кабинета на Главную страницу по клику на «Конструктор»")
@@ -29,8 +34,8 @@ public class AccountTest {
     public void goToMainPageFromAccountPageThroughConstructorBtnTest(){
         signInPage.signIn(user)
                 .goToAccountPageThroughAccountBtn()
-                .goToMainPageThroughConstructorBtn()
-                .checkGoToMainPage();
+                .goToMainPageThroughConstructorBtn();
+        assertThat("Текущий url != url Главной страницы.",webdriver().driver().url(),is(URL_MAIN_PAGE));
     }
 
     @DisplayName("Переход из Личного кабинета на Главную страницу по клику на логотип Stellar Burgers")
@@ -38,8 +43,8 @@ public class AccountTest {
     public void goToMainPageFromAccountPageThroughStellarBurgersBtnTest(){
         signInPage.signIn(user)
                 .goToAccountPageThroughAccountBtn()
-                .goToMainPageThroughStellarBurgersBtn()
-                .checkGoToMainPage();
+                .goToMainPageThroughStellarBurgersBtn();
+        assertThat("Текущий url != url Главной страницы.",webdriver().driver().url(),is(URL_MAIN_PAGE));
     }
 
 
@@ -48,8 +53,11 @@ public class AccountTest {
     public void signOutTest(){
         signInPage.signIn(user)
                 .goToAccountPageThroughAccountBtn()
-                .signOut()
-                .checkGoToSignInPage();
+                .signOut();
+        assertThat("Не произошел переход на страницу авторизации.",
+                signInPage.getLoginHeader().shouldHave(visible).isDisplayed(),is(true));
+        assertThat("Не произошел переход на страницу авторизации.",
+                signInPage.getLoginHeader().shouldHave(visible).isDisplayed(),is(true));
     }
 
     @After

@@ -1,15 +1,16 @@
 package com.pageObject;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
+import lombok.Data;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.page;
-import static com.codeborne.selenide.Selenide.webdriver;
-import static com.codeborne.selenide.WebDriverConditions.url;
 
+@Data
 public class SignInPage {
 
     public static final String URL_SIGN_IN_PAGE = "https://stellarburgers.nomoreparties.site/login";
@@ -30,17 +31,17 @@ public class SignInPage {
     @FindBy(how = How.XPATH,using = "//a[@href=\"/forgot-password\"]")
     private SelenideElement restorePasswordBtn;
 
+    // Текст "Вход"
+    @FindBy(how = How.XPATH,using = "//h2[text()='Вход']")
+    private SelenideElement LoginHeader;
+
+
+    @Step("Авторизовать пользователя.")
     public MainPage signIn(Map<String,String> userCredentials){
         this.email.setValue(userCredentials.get("email"));
         this.password.setValue(userCredentials.get("password"));
         enterBtn.click();
         return page(MainPage.class);
     }
-
-    public SignInPage checkGoToSignInPage(){
-        webdriver().shouldHave(url(URL_SIGN_IN_PAGE));
-        return this;
-    }
-
 
 }
